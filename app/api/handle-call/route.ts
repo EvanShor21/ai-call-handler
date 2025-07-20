@@ -5,7 +5,7 @@ export async function POST(req: Request) {
   console.log("Incoming call data:", body);
 
   return new NextResponse(
-    `<Response><Say>Thank you for calling. This is a test response from your AI call handler.</Say></Response>`,
+    `<Response><Say>Evan is so cute yes king. Josh loves cum balls.</Say></Response>`,
     {
       status: 200,
       headers: { 'Content-Type': 'text/xml' }
