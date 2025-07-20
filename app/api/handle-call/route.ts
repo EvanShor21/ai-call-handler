@@ -8,19 +8,21 @@ const openai = new OpenAI({
 export async function POST(req: NextRequest) {
   const formData = await req.formData();
   const speechResult = formData.get('SpeechResult') as string | null;
-// Fallback if no speech detected or empty transcription
-if (speechResult === null || speechResult.trim() === "") {
-  return new NextResponse(
-    `<Response><Say>I'm sorry, I didn't hear anything. Please call us back during office hours. Goodbye.</Say></Response>`,
-    {
-      status: 200,
-      headers: { 'Content-Type': 'text/xml' }
-    }
-  );
-}
+
+  // Fallback if no speech detected or empty transcription
+  if (speechResult === null || speechResult.trim() === "") {
+    return new NextResponse(
+      `<Response><Say>I'm sorry, I didn't hear anything. Please call us back during office hours. Goodbye.</Say></Response>`,
+      {
+        status: 200,
+        headers: { 'Content-Type': 'text/xml' }
+      }
+    );
+  }
+
   if (speechResult) {
     const completion = await openai.chat.completions.create({
-  model: 'gpt-3.5-turbo',
+      model: 'gpt-3.5-turbo',
       messages: [
         { role: 'system', content: 'You are a polite, helpful receptionist for a dental office.' },
         { role: 'user', content: speechResult }
@@ -38,11 +40,12 @@ if (speechResult === null || speechResult.trim() === "") {
     );
   }
 
+  // Initial greeting when no SpeechResult yet
   return new NextResponse(
     `<Response>
-      <Gather input="speech" action="/api/handle-call" method="POST" timeout="10">
-  <Say>Hello! This is the dental office. How can I help you today?</Say>
-</Gather>
+      <Gather input="speech" action="/api/handle-call" method="POST" timeout="10" actionOnEmptyResult="true">
+        <Say>Hello! This is the dental office. How can I help you today?</Say>
+      </Gather>
     </Response>`,
     {
       status: 200,
