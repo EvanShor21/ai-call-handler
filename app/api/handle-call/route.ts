@@ -9,17 +9,6 @@ export async function POST(req: NextRequest) {
   const formData = await req.formData();
   const speechResult = formData.get('SpeechResult') as string | null;
 
-  // Fallback if no speech detected or empty transcription
-  if (speechResult === null || speechResult.trim() === "") {
-    return new NextResponse(
-      `<Response><Say>I'm sorry, I didn't hear anything. Please call us back during office hours. Goodbye.</Say></Response>`,
-      {
-        status: 200,
-        headers: { 'Content-Type': 'text/xml' }
-      }
-    );
-  }
-
   if (speechResult) {
     const completion = await openai.chat.completions.create({
       model: 'gpt-3.5-turbo',
@@ -40,7 +29,6 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // Initial greeting when no SpeechResult yet
   return new NextResponse(
     `<Response>
       <Gather input="speech" action="/api/handle-call" method="POST" timeout="10" actionOnEmptyResult="true">
