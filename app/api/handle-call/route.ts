@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
     let aiResponse = 'I’m sorry, I didn’t understand that.';
     try {
       const completion = await openai.chat.completions.create({
-        model: 'gpt-3.5-turbo',
+        model: 'gpt-4o',
         max_tokens: 30,
         temperature: 0.3,
         messages: [
